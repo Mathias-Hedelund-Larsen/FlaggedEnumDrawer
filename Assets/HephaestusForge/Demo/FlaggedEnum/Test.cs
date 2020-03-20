@@ -18,7 +18,7 @@ namespace HephaestusForge.FlaggedEnum
 
         private void Awake()
         {
-            using (var enumerator = _flags.IndexesOf().GetEnumerator())
+            using (var enumerator = _flags.GetEnumIndexes().GetEnumerator())
             {
                 while (enumerator.MoveNext())
                 {

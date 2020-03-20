@@ -168,12 +168,12 @@ namespace HephaestusForge.FlaggedEnum
         }
 
         /// <summary>
-        /// Get the index placements of enum values.
+        /// Get the placements of contained enum values.
         /// </summary>
         /// <typeparam name="TEnum">The type of the enum.</typeparam>
         /// <param name="source">The source of the extension method.</param>
         /// <returns>The different enum indexes of the source.</returns>
-        public static IEnumerable<int> IndexesOf<TEnum>(this TEnum source) where TEnum : Enum
+        public static IEnumerable<int> GetEnumIndexes<TEnum>(this TEnum source) where TEnum : Enum
         {
             Type enumType = typeof(TEnum);
 
