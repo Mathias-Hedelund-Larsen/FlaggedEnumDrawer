@@ -200,7 +200,7 @@ namespace HephaestusForge.FlaggedEnum
         /// <typeparam name="TEnum">The type of the enum.</typeparam>
         /// <param name="source">The source of the extension method.</param>
         /// <param name="action">The action to be executed when the source contains a value.</param>
-        public static void ForEach<TEnum>(this TEnum source, Action<TEnum> action) where TEnum : Enum
+        public static void ForEachContained<TEnum>(this TEnum source, Action<TEnum> action) where TEnum : Enum
         {
             Type enumType = typeof(TEnum);
 
@@ -215,6 +215,27 @@ namespace HephaestusForge.FlaggedEnum
                 {
                     action.Invoke(value);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Loop through the values in the TEnum and if the source contains the values, the action will be executed.
+        /// </summary>
+        /// <typeparam name="TEnum">The type of the enum.</typeparam>
+        /// <param name="source">The source of the extension method.</param>
+        /// <param name="action">The action to be executed when the source contains a value.</param>
+        public static void ForEach<TEnum>(this TEnum source, Action<TEnum> action) where TEnum : Enum
+        {
+            Type enumType = typeof(TEnum);
+
+            if (!_storedEnumAndIndex.ContainsKey(enumType))
+            {
+                StoreInDictionary(enumType);
+            }
+
+            foreach (TEnum value in _storedEnumAndIndex[enumType].Keys)
+            {
+                action.Invoke(value);
             }
         }
 

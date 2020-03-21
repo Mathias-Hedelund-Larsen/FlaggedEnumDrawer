@@ -18,13 +18,22 @@ namespace HephaestusForge.FlaggedEnum
 
         private void Awake()
         {
-            int index = (Conditions.Second | Conditions.Fifth).GetEnumValueIndex();
+            var index = Conditions.L;
 
             Debug.Log(index);
 
             _flags = _flags.Add(Conditions.Fifth);
 
-            _flags.ForEach(e => Debug.Log(e));
+            _flags.ForEachContained(e => Debug.Log(e));
+
+            index.ForEach(c =>
+            {
+                index |= c;
+
+                Debug.Log(index);
+
+                Debug.Log((int)index);
+            });
         }
     }
 }
