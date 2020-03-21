@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace HephaestusForge.FlaggedEnum
 {
@@ -20,7 +19,6 @@ namespace HephaestusForge.FlaggedEnum
         /// <param name="source">The source of the extension method.</param>
         /// <param name="value">The value to check if is contained.</param>
         /// <returns>Whether the source contains the value.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Contains<TEnum>(this TEnum source, TEnum value) where TEnum : Enum
         {
             return source.HasFlag(value);
@@ -33,7 +31,6 @@ namespace HephaestusForge.FlaggedEnum
         /// <param name="source">The source of the extension method.</param>
         /// <param name="value">The value to compare the source to.</param>
         /// <returns>Whether the source and value are equal.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Is<TEnum>(this TEnum source, TEnum value) where TEnum : Enum
         {
             return source.CompareTo(value) == 0;
@@ -41,7 +38,7 @@ namespace HephaestusForge.FlaggedEnum
 
         /// <summary>
         /// Adding a value to the enum Source, remember to get the return value, the source isnt modified.
-        /// Could also use |= between the source and value for the same effect without any casting.
+        /// Should also use |= between the source and value instead, this will get the same effect without any casting.
         /// </summary>
         /// <typeparam name="TEnum">The type of the enum.</typeparam>
         /// <param name="source">The source of the extension method.</param>
@@ -93,7 +90,7 @@ namespace HephaestusForge.FlaggedEnum
 
         /// <summary>
         /// Removing the value from the source, remember to get the return value, the source isnt modified.
-        /// Could also use (& ~) between the source and value for the same effect without any casting.
+        /// Should also use (& ~) between the source and value instead, this will get the same effect without any casting.
         /// </summary>
         /// <typeparam name="TEnum">The type of the enum.</typeparam>
         /// <param name="source">The source of the extension method.</param>
@@ -168,27 +165,33 @@ namespace HephaestusForge.FlaggedEnum
         }
 
         /// <summary>
-        /// Get the placements of contained enum values.
+        /// Get the index of the enum value, found by reverse bitshifting with one.
         /// </summary>
         /// <typeparam name="TEnum">The type of the enum.</typeparam>
         /// <param name="source">The source of the extension method.</param>
         /// <returns>The different enum indexes of the source.</returns>
-        public static IEnumerable<int> GetEnumIndexes<TEnum>(this TEnum source) where TEnum : Enum
+        public static int GetEnumValueIndex<TEnum>(this TEnum source) where TEnum : Enum
         {
-            Type enumType = typeof(TEnum);
+            int sourceVal = (int)Enum.ToObject(typeof(TEnum), source);
 
-            if (!_storedEnumAndIndex.ContainsKey(enumType))
-            {
-                StoreInDictionary(enumType);
-            }
+            int i = 0;
 
-            foreach (var pair in _storedEnumAndIndex[enumType])
+            while (sourceVal != 0)
             {
-                if (source.HasFlag(pair.Key))
+                i++;
+                sourceVal = sourceVal >> 1;
+
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                if(sourceVal < 0)
                 {
-                    yield return pair.Value;
+                    UnityEngine.Debug.LogError("Only use a single value of the enum and use bitshifting with 1 bit at a time.");
+                    break;
                 }
+#endif
             }
+
+            return i - 1;
         }
 
         /// <summary>
